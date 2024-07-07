@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Cued Pair Experiment</title>
+    <script src="https://unpkg.com/jspsych@7.3.4"></script>
+    <script src="https://unpkg.com/@jspsych/plugin-html-keyboard-response@1.1.3"></script>
+    <script src="https://unpkg.com/@jspsych/plugin-image-keyboard-response@1.1.3"></script>
+    <script src="https://unpkg.com/@jspsych/plugin-preload@1.1.3"></script>
+    <script src = "jsPsychModImageSlider.js"></script>
+    <script src = "stimuli.js"></script>
+    <script src="https://unpkg.com/@jspsych/plugin-html-button-response@1.2.0"></script>
+    <link href="https://unpkg.com/jspsych@7.3.4/css/jspsych.css" rel="stylesheet" type="text/css" />
+</head>
+
+<body></body>
+<script>
+    //declaring varibles
+    const jsPsych = initJsPsych();
+    var timeline = [];
+
+    //trial variable pass thru
+    var trial = {
+        type: jsPsychModImageSlider,
+        left_stimulus:  jsPsych.timelineVariable('Image_1'),
+        right_stimulus: jsPsych.timelineVariable('Image_2'),
+        group_num: jsPsych.timelineVariable('Group_Number'),
+        similarity: jsPsych.timelineVariable('Similarity'),
+        folder_name: jsPsych.timelineVariable('Folder_Name'),
+        trial_duration: 5000,
+        stimulus_width: 250,
+        stimulus_height: 250,
+        labels: ['Not Similar at All', 'Extremely Similar'],
+    };
+
+    var procedure = {
+        timeline: [trial],
+        timeline_variables: stim_list,
+        randomize_order: true
+    }
+
+    var end = {
+        type: jsPsychHtmlKeyboardResponse,
+        stimulus: `
+        <p>Congratulations! You are done</p>
+        `,
+        on_load: function () {
+            jsPsych.data.get()
+                .ignore('internal_node_id')
+                .ignore('trial_type')
+                .ignore('time_elapsed')
+                .localSave('csv', 'mod_image_data.csv');
+        }
+    };
+
+    //pushing to timeline and running
+    timeline.push(procedure, end)
+    jsPsych.run(timeline);
+    
+</script>
+</html>
